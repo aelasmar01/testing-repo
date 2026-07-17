@@ -1,0 +1,25 @@
+version: 1
+
+project:
+  id: testing-repo
+  language: python
+  default_branch: main
+  portfolio_categories:
+    - testing
+    - workbench
+
+commands:
+  test:
+    - python3 -B -c "from src.app import greeting; assert greeting().startswith('hello')"
+
+  lint:
+    - python3 -B -m py_compile src/app.py
+
+protected_paths:
+  - .github/workflows
+  - security
+
+evidence: {}
+
+concurrency:
+  maximum_active_tasks: 2
