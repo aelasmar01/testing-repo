@@ -1,0 +1,264 @@
+tasks:
+  - id: TR-001
+    project: testing-repo
+    title: Document the greeting function
+    type: documentation
+    priority: high
+    estimated_minutes: 20
+    objective: Update the README with a short usage example for the existing greeting function.
+    acceptance_criteria:
+      - README explains what greeting returns
+      - README includes a Python usage example
+      - Existing greeting behavior is unchanged
+    constraints:
+      - Do not add dependencies
+      - Do not change harness.yaml
+    expected_paths:
+      - README.md
+      - src/app.py
+    required_checks:
+      - lint
+      - test
+    portfolio_signals:
+      - documentation
+      - Python engineering
+    dependencies: []
+
+  - id: TR-002
+    project: testing-repo
+    title: Add a farewell helper
+    type: feature
+    priority: high
+    estimated_minutes: 30
+    objective: Add a small farewell helper alongside greeting for manual workflow testing.
+    acceptance_criteria:
+      - src/app.py exposes farewell
+      - farewell returns a non-empty string
+      - Existing greeting behavior is unchanged
+      - README mentions the new helper
+    constraints:
+      - Do not add dependencies
+      - Keep the implementation simple and typed
+    expected_paths:
+      - src/app.py
+      - README.md
+    required_checks:
+      - lint
+      - test
+    portfolio_signals:
+      - Python engineering
+    dependencies:
+      - TR-001
+
+  - id: TR-003
+    project: testing-repo
+    title: Add name-aware greeting
+    type: feature
+    priority: medium
+    estimated_minutes: 35
+    objective: Add a helper that returns a greeting for a provided display name.
+    acceptance_criteria:
+      - src/app.py exposes greeting_for_name
+      - The helper trims surrounding whitespace
+      - Empty names fall back to the default greeting
+      - Existing greeting behavior is unchanged
+    constraints:
+      - Do not add dependencies
+      - Preserve the existing greeting function signature
+    expected_paths:
+      - src/app.py
+      - README.md
+    required_checks:
+      - lint
+      - test
+    portfolio_signals:
+      - Python engineering
+      - input handling
+    dependencies:
+      - TR-002
+
+  - id: TR-004
+    project: testing-repo
+    title: Add simple module constants
+    type: refactor
+    priority: medium
+    estimated_minutes: 25
+    objective: Extract repeated greeting text into clear module-level constants.
+    acceptance_criteria:
+      - src/app.py defines a constant for the default greeting text
+      - greeting uses the constant
+      - Public helper behavior remains unchanged
+    constraints:
+      - Do not change harness.yaml
+      - Do not introduce classes or unnecessary abstraction
+    expected_paths:
+      - src/app.py
+    required_checks:
+      - lint
+      - test
+    portfolio_signals:
+      - refactoring
+      - maintainability
+    dependencies:
+      - TR-003
+
+  - id: TR-005
+    project: testing-repo
+    title: Add lightweight self-test script
+    type: test
+    priority: medium
+    estimated_minutes: 40
+    objective: Add a small script that manually verifies the public helpers without requiring pytest.
+    acceptance_criteria:
+      - scripts/self_check.py exists
+      - The script imports helpers from src.app
+      - The script exits successfully when helper outputs are valid
+      - README documents how to run the self-check
+    constraints:
+      - Do not add third-party test dependencies
+      - Do not change harness.yaml
+    expected_paths:
+      - scripts/self_check.py
+      - README.md
+      - src/app.py
+    required_checks:
+      - lint
+      - test
+    portfolio_signals:
+      - testing
+      - reproducibility
+    dependencies:
+      - TR-004
+
+  - id: TR-006
+    project: testing-repo
+    title: Improve empty input handling
+    type: bugfix
+    priority: high
+    estimated_minutes: 30
+    objective: Make the name-aware greeting handle None-like or empty user input defensively.
+    acceptance_criteria:
+      - Empty strings use the default greeting
+      - Whitespace-only strings use the default greeting
+      - Non-empty names still appear in the personalized greeting
+      - Existing harness checks pass
+    constraints:
+      - Do not add runtime dependencies
+      - Preserve existing helper names
+    expected_paths:
+      - src/app.py
+      - scripts/self_check.py
+    required_checks:
+      - lint
+      - test
+    portfolio_signals:
+      - input validation
+      - bugfix
+    dependencies:
+      - TR-005
+
+  - id: TR-007
+    project: testing-repo
+    title: Add project metadata helper
+    type: feature
+    priority: low
+    estimated_minutes: 35
+    objective: Add a small metadata helper that returns static information about the fixture project.
+    acceptance_criteria:
+      - src/app.py exposes project_metadata
+      - project_metadata returns a dictionary with name and purpose keys
+      - README documents the metadata helper
+      - Existing greeting helpers remain unchanged
+    constraints:
+      - Do not read from environment variables
+      - Do not perform filesystem or network access
+    expected_paths:
+      - src/app.py
+      - README.md
+    required_checks:
+      - lint
+      - test
+    portfolio_signals:
+      - Python engineering
+      - local-first
+    dependencies:
+      - TR-006
+
+  - id: TR-008
+    project: testing-repo
+    title: Add security notes to README
+    type: security
+    priority: low
+    estimated_minutes: 25
+    objective: Document the fixture repository's security assumptions for manual workbench testing.
+    acceptance_criteria:
+      - README has a Security notes section
+      - The section states that no secrets are required
+      - The section states that no network calls are expected
+      - No application behavior changes
+    constraints:
+      - Do not add credentials, tokens, or example secrets
+      - Do not modify source behavior for this task
+    expected_paths:
+      - README.md
+    required_checks:
+      - lint
+      - test
+    portfolio_signals:
+      - security documentation
+    dependencies:
+      - TR-001
+
+  - id: TR-009
+    project: testing-repo
+    title: Add deterministic output summary
+    type: evaluation
+    priority: low
+    estimated_minutes: 35
+    objective: Add a helper that returns a deterministic summary of the module's public outputs.
+    acceptance_criteria:
+      - src/app.py exposes output_summary
+      - output_summary includes the default greeting
+      - output_summary includes available helper names
+      - Output order is deterministic
+    constraints:
+      - Do not introspect globals dynamically
+      - Do not add dependencies
+    expected_paths:
+      - src/app.py
+      - README.md
+    required_checks:
+      - lint
+      - test
+    portfolio_signals:
+      - reproducibility
+      - evaluation
+    dependencies:
+      - TR-007
+
+  - id: TR-010
+    project: testing-repo
+    title: Clean up README structure
+    type: chore
+    priority: low
+    estimated_minutes: 25
+    objective: Organize the README into clear sections for overview, usage, checks, and security notes.
+    acceptance_criteria:
+      - README has Overview, Usage, Checks, and Security notes sections
+      - Existing useful README content is preserved
+      - Commands shown in README match harness checks
+      - No source behavior changes
+    constraints:
+      - Do not modify harness.yaml
+      - Do not add generated artifacts
+    expected_paths:
+      - README.md
+    required_checks:
+      - lint
+      - test
+    portfolio_signals:
+      - documentation
+      - developer experience
+    dependencies:
+      - TR-008
+      - TR-009
