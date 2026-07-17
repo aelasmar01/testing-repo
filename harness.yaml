@@ -13,7 +13,7 @@ commands:
     - python3 -B -c "from src.app import greeting; assert greeting().startswith('hello')"
 
   lint:
-    - python3 -B -m py_compile src/app.py
+    - python3 -B -c "compile(open('src/app.py').read(), 'src/app.py', 'exec')"
 
 protected_paths:
   - .github/workflows
